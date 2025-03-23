@@ -10,6 +10,9 @@ import schemas # custom schemas
 import os
 from dotenv import load_dotenv
 from database import get_db
+import json
+from models import PersonalizedStory, Exercise
+from typing import List
 
 load_dotenv()
 
@@ -42,6 +45,15 @@ def get_user_by_email(db: Session, email: str):
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
+
+def get_exercises_by_user(db: Session, user_id: int):
+    return (
+        db.query(Exercise)
+        .join(models.PersonalizedStory)
+        .filter(models.PersonalizedStory.user_id == user_id)
+        .order_by(Exercise.created_at.desc())
+        .all()
+    )
 
 def create_user(db: Session, user: schemas.UserCreate): # create a new user in the database based on the email, hashed password and full name
     hashed_password = get_password_hash(user.password)
@@ -113,3 +125,18 @@ def update_user_progress(db: Session, user_id: int, vocabulary_id: int, mastery_
     db.commit()
     db.refresh(db_progress)
     return db_progress 
+
+def create_story(db: Session, user_id: int, title: str, vocab_list: List[str], content: str):
+    story = PersonalizedStory(
+        user_id=user_id,
+        title=title,
+        content=content,
+        vocabulary=json.dumps(vocab_list)
+    )
+    db.add(story)
+    db.commit()
+    db.refresh(story)
+    return story
+
+def get_stories_by_user(db: Session, user_id: int):
+    return db.query(PersonalizedStory).filter(PersonalizedStory.user_id == user_id).all()
