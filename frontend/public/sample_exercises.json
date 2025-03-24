@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "created_at": "2025-03-23T04:28:58.021574",
+    "story": {
+      "title": "A Day in the Jungle",
+      "vocabulary": ["sun", "jungle", "explore", "animal"],
+      "content": "Once upon a time, a young explorer set foot into the vast jungle. The sun was shining above, and every step was a new discovery. Animals peeked from behind the trees as the explorer tried to remember the vocabulary: sun, jungle, explore, animal."
+    }
+  },
+  {
+    "id": 2,
+    "created_at": "2025-03-24T12:00:00.000000",
+    "story": {
+      "title": "Adventure at Sea",
+      "vocabulary": ["boat", "ocean", "wave", "captain"],
+      "content": "The captain took the boat into the deep ocean. Waves gently rocked the boat, and everyone onboard practiced their new vocabulary: boat, ocean, wave, captain."
+    }
+  },
+  {
+    "id": 3,
+    "created_at": "2025-03-25T09:15:00.000000",
+    "story": {
+      "title": "Exploring Space",
+      "vocabulary": ["rocket", "planet", "astronaut", "stars"],
+      "content": "An astronaut boarded the rocket, setting off to explore new planets. The stars guided the journey, and along the way, the astronaut noted important vocabulary: rocket, planet, astronaut, stars."
+    }
+  }
+]
