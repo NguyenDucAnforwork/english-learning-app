@@ -1,42 +1,39 @@
 import json
+from sqlalchemy.orm import Session
+from database import SessionLocal
+from models import User, PersonalizedStory, Exercise
 from datetime import datetime
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import Base, User, PersonalizedStory, Exercise
 
-# 🛠 Sửa đường dẫn nếu bạn dùng PostgreSQL / MySQL
-DATABASE_URL = "sqlite:///./test.db"
+db: Session = SessionLocal()
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-Session = sessionmaker(bind=engine)
-session = Session()
+with open('samples.json', encoding='utf-8') as f:
+    data = json.load(f)
 
-# 🔽 Đọc dữ liệu từ file sample_exercises.json
-with open("../frontend/app/exercises/sample_exercises.json", "r") as f:
-    sample_data = json.load(f)
-
-# 🧠 Giả sử đã có user có id=1
-user = session.query(User).filter(User.id == 1).first()
+# Giả sử exercises này thuộc về user có id=1
+user = db.query(User).filter(User.id == 1).first()
 if not user:
-    raise ValueError("❌ User with id=1 not found. Please register a user first.")
+    print("User id=1 does not exist, please register a user first.")
+else:
+    for item in data:
+        story_data = item['story']
 
-# ✍️ Tạo story
-story = PersonalizedStory(
-    user_id=user.id,
-    title=sample_data["story"]["title"],
-    content=sample_data["story"]["content"],
-    vocabulary=json.dumps(sample_data["story"]["vocabulary"]),
-    created_at=datetime.strptime(sample_data["created_at"], "%Y-%m-%dT%H:%M:%S")
-)
-session.add(story)
-session.commit()
+        story = PersonalizedStory(
+            user_id=user.id,
+            title=story_data['title'],
+            vocabulary=json.dumps(story_data['vocabulary']),
+            content=story_data['content'],
+            created_at=datetime.fromisoformat(item['created_at'])
+        )
+        db.add(story)
+        db.commit()
+        db.refresh(story)
 
-# 📚 Tạo exercise tương ứng
-exercise = Exercise(
-    story_id=story.id,
-    created_at=story.created_at
-)
-session.add(exercise)
-session.commit()
+        exercise = Exercise(
+            story_id=story.id,
+            created_at=story.created_at
+        )
+        db.add(exercise)
+        db.commit()
 
-print(f"✅ Inserted story id={story.id} and exercise id={exercise.id}")
+print("✅ Loaded sample data successfully.")
+db.close()

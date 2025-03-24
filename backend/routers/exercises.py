@@ -23,7 +23,7 @@ def list_exercises(
 ):
     return crud.get_exercises_by_user(db, current_user.id)
 
-@router.delete("/exercise/{exercise_id}", status_code=204)
+@router.delete("/exercises/{exercise_id}", status_code=204)
 def delete_exercise(
     exercise_id: int,
     current_user: schemas.User = Depends(crud.get_current_user),

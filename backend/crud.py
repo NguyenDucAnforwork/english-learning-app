@@ -104,6 +104,17 @@ def create_vocabulary(db: Session, vocabulary: schemas.VocabularyCreate):
 def get_vocabulary(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Vocabulary).offset(skip).limit(limit).all()
 
+# Exercise
+def create_exercise(db: Session, story_id: int):
+    new_exercise = Exercise(
+        story_id=story_id,
+        created_at=datetime.now()  # if not automatically set by your model
+    )
+    db.add(new_exercise)
+    db.commit()
+    db.refresh(new_exercise)
+    return new_exercise
+
 def update_user_progress(db: Session, user_id: int, vocabulary_id: int, mastery_level: int):
     db_progress = db.query(models.UserProgress).filter(
         models.UserProgress.user_id == user_id,
